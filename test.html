@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="src/Pizzicato.min.js"></script>
+  <!-- <script src="src/simpleTones.js"></script> -->
+  <title>Audio Test</title>
+</head>
+<body>
+  <h1>This is a test page for playing audio.</h1>
+  <button onclick="testAudio()">Play A = 880 Hz!</button>
+  <!-- <button onclick="louder()">Louder!</button> -->
+  <!-- <button onclick="softer()">Softer...</button> -->
+  <button onclick="stop()">Stop!</button>
+  <script>
+    /*
+    function testAudio() {
+      playTone("A#4", "sawtooth", 5);
+    }
+    */
+    var s = new Pizzicato.Sound({
+      source: 'wave',
+      options: {
+        type: 'sine',
+        frequency: 1760 * 10,
+        volume: 0.125,
+      }
+    });
+    function testAudio() {
+      s.play();
+    }
+    function stop() {
+      s.stop();
+    }
+
+  </script>
+</body>
+</html>
