@@ -153,17 +153,9 @@ function finishTrial(t, callback) {
 }
 
 function sendResults(subjectId, allResults) {
-  /*
-  fs.appendFile(OUT_FILE,
-    subjectId + ',' + frequency + ',' + volume + ',' + response + '\n',
-    function (err) {
-      if (err) throw err;
-    }
-  );
-  */
   var resObj = {
     subjectId: subjectId,
-    results: results
+    results: allResults
     // list of {subjectId: "1", frequency: 440, volume: 0.5, response: "2"}
   }
   $.post('http://localhost:8000', resObj);
