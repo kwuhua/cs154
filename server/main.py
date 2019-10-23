@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import json
 from urllib.parse import parse_qs
 import socket
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -13,7 +14,7 @@ class MyServer(BaseHTTPRequestHandler):
     # set header base
     def _set_headers(self):
         self.send_response(200)
-        self.send_header("Content-type", "text/html")
+        self.send_header("Content-type", "application/json")
         self.end_headers()
         
     # GET is for getting data.
@@ -26,12 +27,12 @@ class MyServer(BaseHTTPRequestHandler):
     def do_POST(self):
         print( "incomming http: ", self.path )
         content_length = int(self.headers['Content-Length'])
-        post_data = parse_qs(self.rfile.read(content_length))
+        post_data = json.load(self.rfile.read(content_length))
 
         print(post_data)
 
         try:
-            self.wfile.write(bytes("<p>Successful write to path: %s</p>" % self.path, "utf-8"))
+            self.wfile.write(bytes("Successful write: %s", "utf-8"))
             self.send_response(200)
         except:
             self.wfile.write(bytes("<p>FAIL: Unable to write to path: %s</p>" % self.path, "utf-8"))
