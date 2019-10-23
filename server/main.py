@@ -32,7 +32,7 @@ class MyServer(BaseHTTPRequestHandler):
         print(post_data)
 
         try:
-            self.wfile.write(bytes("Successful write: %s", "utf-8"))
+            self.wfile.write(bytes("Successful write: %s" % post_data, "utf-8"))
             self.send_response(200)
         except:
             self.wfile.write(bytes("<p>FAIL: Unable to write to path: %s</p>" % self.path, "utf-8"))
