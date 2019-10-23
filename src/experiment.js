@@ -23,12 +23,13 @@ async function experiment() {
   }
 
   // list of [freq, volume] pairs
+  /*
   var tests = [];
   var i;
   for (i = 0; i < freqs.length; i++) {
     tests.push([freqs[i], 0.5])
-  }
-  // var tests = [[440, 0.5], [880, 0.25]], for testing purposes
+  } */
+  var tests = [[440, 0.5], [880, 0.25]] //, for testing purposes
 
   // Hide "Begin experiment" button and show experiment buttons.
   document.getElementById("begin").style.display = "none";
@@ -153,17 +154,9 @@ function finishTrial(t, callback) {
 }
 
 function sendResults(subjectId, allResults) {
-  /*
-  fs.appendFile(OUT_FILE,
-    subjectId + ',' + frequency + ',' + volume + ',' + response + '\n',
-    function (err) {
-      if (err) throw err;
-    }
-  );
-  */
   var resObj = {
     subjectId: subjectId,
-    results: results
+    results: allResults
     // list of {subjectId: "1", frequency: 440, volume: 0.5, response: "2"}
   }
   $.post('http://localhost:8000', resObj);
