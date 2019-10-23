@@ -13,8 +13,8 @@
   <!-- <button onclick="louder()">Louder!</button> -->
   <!-- <button onclick="softer()">Softer...</button> --> 
   <button onclick="stop()">Stop</button>
-  <button onclick="nextAudio()">&#x2190;</button>
-  <button onclick="nextAudio()">&#x2192;</button>
+  <button onclick="nextSound()">&#x2190;</button>
+  <button onclick="nextSound()">&#x2192;</button>
   <script>
     /*
     function testAudio() {
@@ -26,38 +26,40 @@
     /*
         Why these? Mainly because according to https://www.teachmeaudio.com/mixing/techniques/audio-spectrum/ values, the audible ~flexible~ boundaries for higher and lower audible sounds by the masses are the lower hF and higher lF bounds below respectively.
     */
-    var highFreqs = [16000, 14500, 13000, 11500, 10000, 8500, 7000, 5500, 4000];
-    var lowFreqs = [10, 30, 65, 100, 135, 170, 205, 240, 275];
-    var freqs = higFreqs.concat(lowFreqs).sort(function(i, j){
+    const highFreqs = [17500, 16000, 14500, 13000, 11500, 10000, 8500, 7000, 5500];
+    const lowFreqs = [10, 30, 65, 100, 135, 170, 205];
+    const freqs = highFreqs.concat(lowFreqs).sort(function(i, j){
         return (Math.random() * 2) - 1;
     });
+    // console.log(freqs)
 
     // INTENSITIES (VOLUME)
-    var intensities = [0.125, 0.250, 0.5, 0.75, 0.875];
+    var intensities = [0.5]; //[0.125, 0.250, 0.5, 0.75, 0.875];
  
     var whiteNoise = new Pizzicato.Sound(function(e) {
-            var output = e.outputBuffer.getChannelData(0);
-            for (var i = 0; i < e.outputBuffer.length; i++)
-                output[i] = Math.random();
-            }
-        );
+        var output = e.outputBuffer.getChannelData(0);
+        for (var i = 0; i < e.outputBuffer.length; i++)
+            output[i] = Math.random();
+        }
+    );
  
-    window.hci = {};
-    window.hci.frequencyOptionCount = 0;
-    window.hci.intensityOptionCount = 0; 
-    window.hci.sound = null; 
-    window.hci.testValue = freqs.length*window.hci.frequencyOptionCount + window.intensityOptionCount + 1;
+    // window.hci = {};
+    frequencyOptionCount = 0;
+    intensityOptionCount = 0;  
+    testValue = freqs.length*frequencyOptionCount + intensityOptionCount + 1;
+    
+    var s = null;
  
     function testAudio() {
-      window.hci.sound = new Pizzicato.Sound({
+      s = new Pizzicato.Sound({
         source: 'wave',
         options: {
             type: 'sine',
-            frequency: freqs[window.hci.frequencyOptionCount],
-            volume: intensities[window.hci.intensityOptionCount],
+            frequency: freqs[frequencyOptionCount],
+            volume: intensities[intensityOptionCount],
         }
       });
-      window.hci.sound.play();
+      s.play();
     }
 
     function cleanAudio() {
@@ -68,22 +70,22 @@
     }
 
     function nextSound() {
-        var fOC = window.hci.frequencyOptionCount + 1;
-        var iOC = window.hci.intensityOptionCount + 1;
+        var fOC = frequencyOptionCount + 1;
+        var iOC = intensityOptionCount + 1;
         
         if (fOC >= freqs.length && iOC >= intensities.length) {
             alert("Test is Complete!");
         } else if (iOC >= intensities.length) {
-            window.hci.frequencyOptionCount = fOC;
-            window.hci.intensityOptionCount = 0;
+            frequencyOptionCount = fOC;
+            intensityOptionCount = 0;
         } else {
-            window.hci.intensityOptionCount = iOC;
-            window.hci.frequencyOptionCount = fOC; 
+            intensityOptionCount = iOC;
+            frequencyOptionCount = fOC; 
         }
     }
 
     function stop() {
-        window.hci.sound.stop();
+        s.stop();
     }
 
   </script>
