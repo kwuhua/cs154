@@ -5,8 +5,9 @@ from urllib.parse import parse_qs
 import socket
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
+from os import curdir, sep
 
-hostName = "localhost"
+hostName = ""
 hostPort = 8000
 
 class MyServer(BaseHTTPRequestHandler):
@@ -21,8 +22,15 @@ class MyServer(BaseHTTPRequestHandler):
     def do_GET(self):
         self._set_headers()
         print( "incoming http: ", self.path )
-        self.wfile.write(bytes("<p>You accessed path: %s</p>" % self.path, "utf-8"))
-        
+        if self.path=="/":
+            self.path="/index.html"
+            f = open(curdir + sep + self.path)
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            self.wfile.write(bytes(f.read()))
+            f.close()
+    
     # POST is for submitting data.
     def do_POST(self):
         print( "incomming http: ", self.path )
