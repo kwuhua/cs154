@@ -49,7 +49,7 @@ async function experiment() {
     allResults.push(results);
   }
 
-  sendResults(allResults)''
+  sendResults(allResults)
   window.alert("finished!");
 }
 
@@ -152,7 +152,7 @@ function finishTrial(t, callback) {
   }, 5000);
 }
 
-function sendResults(allResults) {
+function sendResults(subjectId, allResults) {
   /*
   fs.appendFile(OUT_FILE,
     subjectId + ',' + frequency + ',' + volume + ',' + response + '\n',
@@ -161,4 +161,10 @@ function sendResults(allResults) {
     }
   );
   */
+  var resObj = {
+    subjectId: subjectId,
+    results: results
+    // list of {subjectId: "1", frequency: 440, volume: 0.5, response: "2"}
+  }
+  $.post('http://localhost:8000', resObj);
 }
