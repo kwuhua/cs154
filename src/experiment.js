@@ -38,7 +38,9 @@ function experiment() {
 
 
 function trial(subjectId, tests) {
+  // get first item in tests, and remove it from list
   var values = tests.shift();
+
   var s = new Pizzicato.Sound({
     source: "wave",
     options: {
@@ -47,6 +49,8 @@ function trial(subjectId, tests) {
       volume: values[1],
     }
   });
+
+  // create trial object to pass on to other function calls
   var t = {
     subjectId: subjectId,
     frequency: values[0],
@@ -58,14 +62,21 @@ function trial(subjectId, tests) {
     responseFormEvent: function() { finishTrial(t, tests) }
   }
   console.log("played sound");
+
+  // play sound
   s.play();
+
+  // show response form
   document.getElementById("expt-wait").style.display = "none";
   document.getElementById("expt-response").style.display = "block";
+
+  // add event handlers for toggling on/off and submitting response
   t.toggleBtn.addEventListener("click", t.toggleBtnEvent);
   t.responseForm.addEventListener("submit", t.responseFormEvent);
 }
 
 function toggle(t) {
+  // toggle sound on or off
   if (t.toggleBtn.innerHTML === "Stop") {
     console.log("stopped sound")
     t.sound.stop();
@@ -77,27 +88,38 @@ function toggle(t) {
 }
 
 function finishTrial(t, tests) {
+  // finish the current trial
   console.log("Finishing trial");
+
+  // stop sound
   t.sound.stop();
   t.toggleBtn.innerHTML = "Stop";
 
+  // show waiting interface
   document.getElementById("expt-wait").style.display = "block";
   document.getElementById("expt-response").style.display = "none";
+
+  // remove event handlers in this trial
   t.toggleBtn.removeEventListener("click", t.toggleBtnEvent);
   t.responseForm.removeEventListener("submit", t.responseFormEvent);
 
+  // get response from html form
   var response = document.forms["expt-response-form"]["certain"].value;
   console.log("Response" + response);
+
+  // report results
   recordResults(t.subjectId, t.frequency, t.volume, response)
 
+  // play white noise
   whiteNoise.play();
   setTimeout(function(){
       whiteNoise.stop();
       setTimeout(function(){
+        // wait for a few more seconds to go to next trial
         trial(t.subjectId, tests);
       }, 2000);
   }, 5000);
-  // wait for a few seconds to go to next trial
+
 }
 
 function recordResults(subjectId, frequency, volume, response) {
