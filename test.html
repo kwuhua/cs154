@@ -3,91 +3,37 @@
 <head>
   <meta charset="utf-8">
   <script src="src/Pizzicato.min.js"></script>
+  <script src="src/experiment.js"></script>
   <!-- <script src="src/simpleTones.js"></script> -->
-  <title>Audio Test</title>
+  <title>Frequency Test</title>
 </head>
 <body>
-  <h1>This is a test page for playing audio.</h1>
-  <h2>Test: <span id="testid"></span></h2>
-  <button onclick="testAudio()">Play</button>
-  <!-- <button onclick="louder()">Louder!</button> -->
-  <!-- <button onclick="softer()">Softer...</button> --> 
-  <button onclick="stop()">Stop</button>
-  <button onclick="nextSound()">&#x2190;</button>
-  <button onclick="nextSound()">&#x2192;</button>
-  <script>
-    /*
-    function testAudio() {
-      playTone("A#4", "sawtooth", 5);
-    }
-    */
-
-    // FREQUENCIES
-    /*
-        Why these? Mainly because according to https://www.teachmeaudio.com/mixing/techniques/audio-spectrum/ values, the audible ~flexible~ boundaries for higher and lower audible sounds by the masses are the lower hF and higher lF bounds below respectively.
-    */
-    const highFreqs = [17500, 16000, 14500, 13000, 11500, 10000, 8500, 7000, 5500];
-    const lowFreqs = [10, 30, 65, 100, 135, 170, 205];
-    const freqs = highFreqs.concat(lowFreqs).sort(function(i, j){
-        return (Math.random() * 2) - 1;
-    });
-    // console.log(freqs)
-
-    // INTENSITIES (VOLUME)
-    var intensities = [0.5]; //[0.125, 0.250, 0.5, 0.75, 0.875];
- 
-    var whiteNoise = new Pizzicato.Sound(function(e) {
-        var output = e.outputBuffer.getChannelData(0);
-        for (var i = 0; i < e.outputBuffer.length; i++)
-            output[i] = Math.random();
-        }
-    );
- 
-    // window.hci = {};
-    frequencyOptionCount = 0;
-    intensityOptionCount = 0;  
-    testValue = freqs.length*frequencyOptionCount + intensityOptionCount + 1;
-    
-    var s = null;
- 
-    function testAudio() {
-      s = new Pizzicato.Sound({
-        source: 'wave',
-        options: {
-            type: 'sine',
-            frequency: freqs[frequencyOptionCount],
-            volume: intensities[intensityOptionCount],
-        }
-      });
-      s.play();
-    }
-
-    function cleanAudio() {
-        whiteNoise.play();
-        setTimeout(function(){ 
-            whiteNoise.stop(); 
-        }, 5000);
-    }
-
-    function nextSound() {
-        var fOC = frequencyOptionCount + 1;
-        var iOC = intensityOptionCount + 1;
-        
-        if (fOC >= freqs.length && iOC >= intensities.length) {
-            alert("Test is Complete!");
-        } else if (iOC >= intensities.length) {
-            frequencyOptionCount = fOC;
-            intensityOptionCount = 0;
-        } else {
-            intensityOptionCount = iOC;
-            frequencyOptionCount = fOC; 
-        }
-    }
-
-    function stop() {
-        s.stop();
-    }
-
-  </script>
+  <h1>Frequency Test</h1>
+  <div id="begin">
+    <form id="begin-form" name="begin-form" onsubmit="return false;">
+      Subject Id:<br>
+      <input type="text" name="subjectId"><br>
+      <input type="button" onclick="experiment()" value="Begin experiment">
+    </form>
+  </div>
+  <div id="expt" style="display: none">
+    <div id="expt-response">
+      <p>You are currently hearing a sound.</p>
+      <button id="expt-toggleBtn">Stop</button>
+      <p>From a scale of 0 to 4, how certain are you that you can hear this sound?</p>
+      <form id="expt-response-form" name="expt-response-form" onsubmit="return false">
+        <input type="radio" name="certain" value="0">0 Can't hear anything<br>
+        <input type="radio" name="certain" value="1">1 <br>
+        <input type="radio" name="certain" value="2">2 <br>
+        <input type="radio" name="certain" value="3">3 <br>
+        <input type="radio" name="certain" value="4" checked>4 Can hear very clealy<br>
+        <input type="submit" value="Submit">
+      </form>
+    </div>
+    <div id="expt-wait" style="display: none">
+      <p>Your response is recorded. </p>
+      <p>In a few seconds, a new sound will be played.</p>
+    </div>
+  </div>
 </body>
 </html>
