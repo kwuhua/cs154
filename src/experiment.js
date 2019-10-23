@@ -23,12 +23,13 @@ async function experiment() {
   }
 
   // list of [freq, volume] pairs
+  /*
   var tests = [];
   var i;
   for (i = 0; i < freqs.length; i++) {
     tests.push([freqs[i], 0.5])
-  }
-  // var tests = [[440, 0.5], [880, 0.25]], for testing purposes
+  } */
+  var tests = [[440, 0.5], [880, 0.25]] //, for testing purposes
 
   // Hide "Begin experiment" button and show experiment buttons.
   document.getElementById("begin").style.display = "none";
