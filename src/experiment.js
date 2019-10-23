@@ -16,24 +16,79 @@ var whiteNoise = new Pizzicato.Sound(function(e) {
     }
 );
 
-function experiment() {
+async function experiment() {
   var subjectId = document.forms["begin-form"]["subjectId"].value;
   if (isNaN(subjectId)) {
     return false;
   }
 
   // list of [freq, volume] pairs
+  /*
   var tests = [];
   var i;
   for (i = 0; i < freqs.length; i++) {
     tests.push([freqs[i], 0.5])
   }
+  */
+  var tests = [[440, 0.5], [880, 0.25]];
   // Hide "Begin experiment" button and show experiment buttons.
   document.getElementById("begin").style.display = "none";
   document.getElementById("expt").style.display = "block";
 
   // Run experiments
-  trial(subjectId, tests);
+  for (i = 0; i < tests.length; i++) {
+    var results = await doOneTrial(subjectId, tests[i][0], tests[i][1]);
+    console.log(results);
+  }
+
+  window.alert("finished!");
+}
+
+function doOneTrial(subjectId, frequency, volume) {
+  return new Promise(resolve => {
+    var s = new Pizzicato.Sound({
+      source: "wave",
+      options: {
+        type: "sawtooth",
+        frequency: frequency,
+        volume: volume,
+      }
+    });
+
+    var callback = function (response) {
+      console.log("callback")
+      resolve({
+        subjectId: subjectId,
+        frequency: frequency,
+        volume: volume,
+        response: response
+      });
+    };
+
+    // create trial object to pass on to other function calls
+    var t = {
+      subjectId: subjectId,
+      frequency: frequency,
+      volume: volume,
+      toggleBtn: document.getElementById("expt-toggleBtn"),
+      responseForm: document.getElementById("expt-response-form"),
+      sound: s,
+      toggleBtnEvent: function() { toggle(t) },
+      responseFormEvent: function() { finishTrial(t, callback) }
+    }
+    console.log("played sound");
+
+    // play sound
+    s.play();
+
+    // show response form
+    document.getElementById("expt-wait").style.display = "none";
+    document.getElementById("expt-response").style.display = "block";
+
+    // add event handlers for toggling on/off and submitting response
+    t.toggleBtn.addEventListener("click", t.toggleBtnEvent);
+    t.responseForm.addEventListener("submit", t.responseFormEvent);
+  });
 }
 
 
@@ -87,7 +142,7 @@ function toggle(t) {
   }
 }
 
-function finishTrial(t, tests) {
+function finishTrial(t, callback) {
   // finish the current trial
   console.log("Finishing trial");
 
@@ -107,19 +162,15 @@ function finishTrial(t, tests) {
   var response = document.forms["expt-response-form"]["certain"].value;
   console.log("Response" + response);
 
-  // report results
-  recordResults(t.subjectId, t.frequency, t.volume, response)
-
   // play white noise
   whiteNoise.play();
-  setTimeout(function(){
+  setTimeout(function() {
       whiteNoise.stop();
-      setTimeout(function(){
-        // wait for a few more seconds to go to next trial
-        trial(t.subjectId, tests);
+      setTimeout(function() {
+        // callback function defined in doOneTrial
+        callback(response);
       }, 2000);
   }, 5000);
-
 }
 
 function recordResults(subjectId, frequency, volume, response) {
