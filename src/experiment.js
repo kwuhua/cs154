@@ -49,7 +49,7 @@ async function experiment() {
     allResults.push(results);
   }
 
-  sendResults(allResults)
+  sendResults(subjectId, allResults)
   window.alert("finished!");
 }
 
