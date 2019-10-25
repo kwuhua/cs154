@@ -18,9 +18,13 @@ var whiteNoise = new Pizzicato.Sound(function(e) {
 
 async function experiment() {
   var subjectId = document.forms["begin-form"]["subjectId"].value;
-  /* if (isNaN(subjectId)) {
+
+  /*
+  if (isNaN(subjectId)) {
+    window.alert("Please enter a number!");
     return false;
-  } */
+  }
+  */
 
   // list of [freq, volume] pairs
   /*
