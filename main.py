@@ -48,11 +48,12 @@ class MyServer(BaseHTTPRequestHandler):
 
         print(post_data)
 
+        self._set_headers()
         try:
-            # self.wfile.write(bytes("Successful write: %s" % post_data, "utf-8"))
+            self.wfile.write("Successful write".encode())
             self.send_response(200)
         except:
-            # self.wfile.write(bytes("<p>FAIL: Unable to write to path: %s</p>" % self.path, "utf-8"))
+            self.wfile.write("FAIL: Unable to write to path".encode())
             self.send_response(500)
 
 
