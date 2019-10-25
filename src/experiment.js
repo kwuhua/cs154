@@ -29,7 +29,7 @@ async function experiment() {
   for (i = 0; i < freqs.length; i++) {
     tests.push([freqs[i], 0.5])
   } */
-  var tests = [[440, 0.5], [880, 0.25]] //, for testing purposes
+  var tests = [[440, 0.5], [880, 0.25]] // for testing purposes
 
   // Hide "Begin experiment" button and show experiment buttons.
   document.getElementById("begin").style.display = "none";
@@ -75,7 +75,7 @@ function doOneTrial(subjectId, frequency, volume) {
 
     // this is called when an the finishTrial event handler is finished
     var callback = function (response) {
-      console.log("callback")
+      console.log("callback");
       resolve({
         subjectId: subjectId,
         frequency: frequency,
@@ -94,7 +94,7 @@ function doOneTrial(subjectId, frequency, volume) {
       sound: s,
       toggleBtnEvent: function() { toggle(t) },
       responseFormEvent: function() { finishTrial(t, callback) }
-    }
+    };
     console.log("played sound");
 
     // play sound
@@ -158,6 +158,6 @@ function sendResults(subjectId, allResults) {
     subjectId: subjectId,
     results: allResults
     // list of {subjectId: "1", frequency: 440, volume: 0.5, response: "2"}
-  }
+  };
   $.post('http://localhost:8000', resObj);
 }
