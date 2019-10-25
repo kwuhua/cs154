@@ -5,7 +5,8 @@ from urllib.parse import parse_qs
 import socket
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
-from os import curdir, sep
+from os import curdir, sep, path
+import csv
 
 hostName = ""
 hostPort = 8000
@@ -47,7 +48,19 @@ class MyServer(BaseHTTPRequestHandler):
         post_data = json.loads(self.rfile.read(content_length))
 
         print(post_data)
-
+        if not path.exists("responses.csv"):
+            with open('responses.csv','w') as f: 
+                writer = csv.writer(f)
+                column_headers = ['subject_id'] + [result['frequency'] for result in post_data['results']] 
+                writer.writerow(column_headers)
+                f.close()
+        
+        with open('responses.csv','a') as f:
+            writer = csv.writer(f)
+            data = [post_data['subjectId']] + [result['response'] for result in post_data['results']]
+            writer.writerow(data)
+            f.close() 
+    
         self._set_headers()
         try:
             response_dict = {"Success?": "Success!"}

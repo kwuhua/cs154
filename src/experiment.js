@@ -81,9 +81,7 @@ function doOneTrial(subjectId, frequency, volume, playNoise) {
     var callback = function (response) {
       console.log("callback");
       resolve({
-        subjectId: subjectId,
         frequency: frequency,
-        volume: volume,
         response: response
       });
     };
