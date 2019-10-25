@@ -50,7 +50,10 @@ class MyServer(BaseHTTPRequestHandler):
 
         self._set_headers()
         try:
-            self.wfile.write("Successful write".encode())
+            response_dict = {"Success?": "Success!"}
+            # self.wfile.write("Successful write".encode())
+            self.wfile.write(json.dumps(response_dict).encode())
+            print("writing response")
             self.send_response(200)
         except:
             self.wfile.write("FAIL: Unable to write to path".encode())

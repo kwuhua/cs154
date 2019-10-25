@@ -49,15 +49,16 @@ async function experiment() {
       resolve() in doOneTrial(). The arguments of resolve() is returned by the
       awaite keyword and stored in results.
     */
-    var results = await doOneTrial(subjectId, tests[i][0], tests[i][1]);
+    var playNoise = (i != tests.length - 1);
+    var results = await doOneTrial(subjectId, tests[i][0], tests[i][1], playNoise);
     console.log(results);
     allResults.push(results);
   }
 
-  sendResults(subjectId, allResults)
+  sendResults(subjectId, allResults);
 }
 
-function doOneTrial(subjectId, frequency, volume) {
+function doOneTrial(subjectId, frequency, volume, playNoise) {
   /*
     add event handlers to stop/play button and form submit event.
     submitting the form will call finishTrial().
@@ -96,7 +97,7 @@ function doOneTrial(subjectId, frequency, volume) {
       responseForm: document.getElementById("expt-response-form"),
       sound: s,
       toggleBtnEvent: function() { toggle(t) },
-      responseFormEvent: function() { finishTrial(t, callback) }
+      responseFormEvent: function() { finishTrial(t, callback, playNoise) }
     };
     console.log("played sound");
 
@@ -125,7 +126,7 @@ function toggle(t) {
   }
 }
 
-function finishTrial(t, callback) {
+function finishTrial(t, callback, playNoise) {
   // finish the current trial
   console.log("Finishing trial");
 
@@ -145,15 +146,19 @@ function finishTrial(t, callback) {
   var response = document.forms["expt-response-form"]["certain"].value;
   console.log("Response" + response);
 
-  // play white noise
-  whiteNoise.play();
-  setTimeout(function() {
-      whiteNoise.stop();
-      setTimeout(function() {
-        // callback function defined in doOneTrial
-        callback(response);
-      }, 2000);
-  }, 5000);
+  if (playNoise) {
+    // play white noise
+    whiteNoise.play();
+    setTimeout(function() {
+        whiteNoise.stop();
+        setTimeout(function() {
+          // callback function defined in doOneTrial
+          callback(response);
+        }, 2000);
+    }, 5000);
+  } else {
+    callback(response);
+  }
 }
 
 function sendResults(subjectId, allResults) {
@@ -170,7 +175,7 @@ function sendResults(subjectId, allResults) {
   });
 }
 
-function finishCallback(data) {
+function finishCallback(data, textstatus, blahblah) {
   console.log("finish callback");
   window.alert("Finished and sent results!");
 }
