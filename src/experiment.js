@@ -32,8 +32,8 @@ async function experiment() {
   var tests = [[440, 0.5], [880, 0.25]] // for testing purposes
 
   // Hide "Begin experiment" button and show experiment buttons.
-  document.getElementById("begin").style.display = "none";
-  document.getElementById("expt").style.display = "block";
+  $("#begin").css("display", "none");
+  $("#expt").css("display", "block");
 
   // Run experiments
   var allResults = []
@@ -51,7 +51,6 @@ async function experiment() {
   }
 
   sendResults(subjectId, allResults)
-  window.alert("finished!");
 }
 
 function doOneTrial(subjectId, frequency, volume) {
@@ -159,5 +158,18 @@ function sendResults(subjectId, allResults) {
     results: allResults
     // list of {subjectId: "1", frequency: 440, volume: 0.5, response: "2"}
   };
-  $.post('http://localhost:8000', resObj);
+  $.ajax("/", {
+    data: JSON.stringify(resObj),
+    contentType: "application/json",
+    type: "POST",
+    success: finishCallback
+  });
 }
+
+function finishCallback(data) {
+  window.alert("Finished and sent results!");
+}
+
+$(document).ready(function(){
+  $("#beginBtn").click(experiment);
+})
