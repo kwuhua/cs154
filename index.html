@@ -5,11 +5,13 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="src/Pizzicato.min.js"></script>
   <script src="src/experiment.js"></script>
+  <link rel="stylesheet" media="all" href="https://cdn.jsdelivr.net/gh/hankchizljaw/boilerform@master/dist/css/boilerform.min.css" />
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   <!-- <script src="src/simpleTones.js"></script> -->
   <title>Frequency Test</title>
 </head>
 <body>
+  <div class="boilerform">
   <h1>Frequency Test</h1>
   <div id="begin">
     <form id="begin-form" name="begin-form" onsubmit="return false;">
@@ -26,12 +28,12 @@
       <p>Now listen closely and see if you can hear anything.</p>
       <p>From a scale of 0 to 4, how certain are you that you can hear this sound?</p>
       <form id="expt-response-form" name="expt-response-form" onsubmit="return false">
-        <input type="radio" name="intensity" value="0">0 Can't hear anything<br>
-        <input type="radio" name="intensity" value="1">1 <br>
-        <input type="radio" name="intensity" value="2">2 <br>
-        <input type="radio" name="intensity" value="3">3 <br>
-        <input type="radio" name="intensity" value="4" checked>4 Can hear very clealy<br>
-        <input id="expt-response-submit" type="submit" value="Submit">
+        <input type="radio" name="intensity" value="0" />0 Can't hear anything<br>
+        <input type="radio" name="intensity" value="1" />1 Can hear sound much more softly in comparison to 440Hz<br>
+        <input type="radio" name="intensity" value="2" />2 Can hear sound somewhat softer in comparison to 440Hx<br>
+        <input type="radio" name="intensity" value="3" />3 Can hear sound almost as loudly / clearly in comparison to 440Hz<br>
+        <input type="radio" name="intensity" value="4" checked>4 Can hear sound just as or more loud / clear in comparison to 440Hz<br>
+        <input class="c-button" id="expt-response-submit" type="submit" value="Submit">
       </form>
     </div>
     <div id="expt-wait">
@@ -41,6 +43,7 @@
     <div id ="expt-finish">
       <p>The experiment has finished! Thanks for your participation!</p>
     </div>
+  </div>
   </div>
 </body>
 </html>
