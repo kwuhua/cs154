@@ -9,24 +9,53 @@
   <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   <!-- <script src="src/simpleTones.js"></script> -->
   <title>Frequency Test</title>
+  <style>
+    body {
+        font-family: Tahoma, Geneva, sans-serif;
+        background-color: black;   
+        padding: 5px 5px 5px 5px; 
+    }
+    h1 {
+        color: white;    
+    }
+    #begin, #expt {
+        background-color: white;
+        color: black;
+        min-height: 260px;
+        margin: 5px 5px 5px 5px;    
+    }
+    input {
+        margin-top: 2px;
+        margin-bottom: 2px;
+        padding-top: 5px;
+        padding-bottom: 5px;     
+    }
+    input["radio"]:hover {
+        color: red;
+    }
+    form {
+        padding: 5px 5px 5px 5px; 
+    }
+    .range {
+        color: green;    
+    }
+  </style>
 </head>
 <body>
-  <div class="boilerform">
   <h1>Frequency Test</h1>
+  <div class="boilerform"> 
   <div id="begin">
     <form id="begin-form" name="begin-form" onsubmit="return false;">
-      Subject Id:<br>
-      <input type="text" name="subjectId"><br>
-      <input type="button" id="beginBtn" value="Begin experiment">
+      Subject Id: <input type="text" name="subjectId"><br>
+      <input class="c-button" type="button" id="beginBtn" value="Begin experiment">
     </form>
   </div>
   <div id="expt" style="display: none">
     <div id="expt-ref">
-      <p><b>You are currently hearing the note A = 440 Hz for the next few seconds. You should be able to hear this very clearly.</b></p>
+      <p><b>You are currently hearing the note <span class="range">A = 440 Hz</span> for the next few seconds. You should be able to hear this very clearly.</b></p>
     </div>
     <div id="expt-response">
-      <p>Now listen closely and see if you can hear anything.</p>
-      <p>From a scale of 0 to 4, how certain are you that you can hear this sound?</p>
+      <p><b>Now listen closely and see if you can hear anything. From a scale of <span class="range">0</span> to <span class="range">4</span>, how certain are you that you can hear this sound?</b></p>
       <form id="expt-response-form" name="expt-response-form" onsubmit="return false">
         <input type="radio" name="intensity" value="0" />0 Can't hear anything<br>
         <input type="radio" name="intensity" value="1" />1 Can hear sound much more softly in comparison to 440Hz<br>
