@@ -18,9 +18,13 @@ var whiteNoise = new Pizzicato.Sound(function(e) {
 
 async function experiment() {
   var subjectId = document.forms["begin-form"]["subjectId"].value;
+
+  /*
   if (isNaN(subjectId)) {
+    window.alert("Please enter a number!");
     return false;
   }
+  */
 
   // list of [freq, volume] pairs
   /*
@@ -29,11 +33,11 @@ async function experiment() {
   for (i = 0; i < freqs.length; i++) {
     tests.push([freqs[i], 0.5])
   } */
-  var tests = [[440, 0.5], [880, 0.25]] //, for testing purposes
+  var tests = [[440, 0.5], [880, 0.25]] // for testing purposes
 
   // Hide "Begin experiment" button and show experiment buttons.
-  document.getElementById("begin").style.display = "none";
-  document.getElementById("expt").style.display = "block";
+  $("#begin").css("display", "none");
+  $("#expt").css("display", "block");
 
   // Run experiments
   var allResults = []
@@ -45,16 +49,16 @@ async function experiment() {
       resolve() in doOneTrial(). The arguments of resolve() is returned by the
       awaite keyword and stored in results.
     */
-    var results = await doOneTrial(subjectId, tests[i][0], tests[i][1]);
+    var playNoise = (i != tests.length - 1);
+    var results = await doOneTrial(subjectId, tests[i][0], tests[i][1], playNoise);
     console.log(results);
     allResults.push(results);
   }
 
-  sendResults(subjectId, allResults)
-  window.alert("finished!");
+  sendResults(subjectId, allResults);
 }
 
-function doOneTrial(subjectId, frequency, volume) {
+function doOneTrial(subjectId, frequency, volume, playNoise) {
   /*
     add event handlers to stop/play button and form submit event.
     submitting the form will call finishTrial().
@@ -75,11 +79,9 @@ function doOneTrial(subjectId, frequency, volume) {
 
     // this is called when an the finishTrial event handler is finished
     var callback = function (response) {
-      console.log("callback")
+      console.log("callback");
       resolve({
-        subjectId: subjectId,
         frequency: frequency,
-        volume: volume,
         response: response
       });
     };
@@ -93,8 +95,8 @@ function doOneTrial(subjectId, frequency, volume) {
       responseForm: document.getElementById("expt-response-form"),
       sound: s,
       toggleBtnEvent: function() { toggle(t) },
-      responseFormEvent: function() { finishTrial(t, callback) }
-    }
+      responseFormEvent: function() { finishTrial(t, callback, playNoise) }
+    };
     console.log("played sound");
 
     // play sound
@@ -122,7 +124,7 @@ function toggle(t) {
   }
 }
 
-function finishTrial(t, callback) {
+function finishTrial(t, callback, playNoise) {
   // finish the current trial
   console.log("Finishing trial");
 
@@ -142,15 +144,19 @@ function finishTrial(t, callback) {
   var response = document.forms["expt-response-form"]["certain"].value;
   console.log("Response" + response);
 
-  // play white noise
-  whiteNoise.play();
-  setTimeout(function() {
-      whiteNoise.stop();
-      setTimeout(function() {
-        // callback function defined in doOneTrial
-        callback(response);
-      }, 2000);
-  }, 5000);
+  if (playNoise) {
+    // play white noise
+    whiteNoise.play();
+    setTimeout(function() {
+        whiteNoise.stop();
+        setTimeout(function() {
+          // callback function defined in doOneTrial
+          callback(response);
+        }, 2000);
+    }, 5000);
+  } else {
+    callback(response);
+  }
 }
 
 function sendResults(subjectId, allResults) {
@@ -158,6 +164,20 @@ function sendResults(subjectId, allResults) {
     subjectId: subjectId,
     results: allResults
     // list of {subjectId: "1", frequency: 440, volume: 0.5, response: "2"}
-  }
-  $.post('http://localhost:8000', resObj);
+  };
+  $.ajax("/", {
+    data: JSON.stringify(resObj),
+    contentType: "application/json",
+    type: "POST",
+    success: finishCallback
+  });
 }
+
+function finishCallback(data, textstatus, blahblah) {
+  console.log("finish callback");
+  window.alert("Finished and sent results!");
+}
+
+$(document).ready(function(){
+  $("#beginBtn").click(experiment);
+})

@@ -5,6 +5,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="src/Pizzicato.min.js"></script>
   <script src="src/experiment.js"></script>
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
   <!-- <script src="src/simpleTones.js"></script> -->
   <title>Frequency Test</title>
 </head>
@@ -14,7 +15,7 @@
     <form id="begin-form" name="begin-form" onsubmit="return false;">
       Subject Id:<br>
       <input type="text" name="subjectId"><br>
-      <input type="button" onclick="experiment()" value="Begin experiment">
+      <input type="button" id="beginBtn" value="Begin experiment">
     </form>
   </div>
   <div id="expt" style="display: none">
