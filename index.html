@@ -19,22 +19,27 @@
     </form>
   </div>
   <div id="expt" style="display: none">
+    <div id="expt-ref">
+      <p><b>You are currently hearing the note A = 440 Hz for the next few seconds. You should be able to hear this very clearly.</b></p>
+    </div>
     <div id="expt-response">
-      <p>You are currently hearing a sound.</p>
-      <button id="expt-toggleBtn">Stop</button>
+      <p>Now listen closely and see if you can hear anything.</p>
       <p>From a scale of 0 to 4, how certain are you that you can hear this sound?</p>
       <form id="expt-response-form" name="expt-response-form" onsubmit="return false">
-        <input type="radio" name="certain" value="0">0 Can't hear anything<br>
-        <input type="radio" name="certain" value="1">1 <br>
-        <input type="radio" name="certain" value="2">2 <br>
-        <input type="radio" name="certain" value="3">3 <br>
-        <input type="radio" name="certain" value="4" checked>4 Can hear very clealy<br>
-        <input type="submit" value="Submit">
+        <input type="radio" name="intensity" value="0">0 Can't hear anything<br>
+        <input type="radio" name="intensity" value="1">1 <br>
+        <input type="radio" name="intensity" value="2">2 <br>
+        <input type="radio" name="intensity" value="3">3 <br>
+        <input type="radio" name="intensity" value="4" checked>4 Can hear very clealy<br>
+        <input id="expt-response-submit" type="submit" value="Submit">
       </form>
     </div>
-    <div id="expt-wait" style="display: none">
+    <div id="expt-wait">
       <p>Your response is recorded. </p>
       <p>In a few seconds, a new sound will be played.</p>
+    </div>
+    <div id ="expt-finish">
+      <p>The experiment has finished! Thanks for your participation!</p>
     </div>
   </div>
 </body>

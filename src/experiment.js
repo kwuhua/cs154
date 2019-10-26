@@ -3,11 +3,22 @@ const OUT_FILE = 'results/res.csv';
 /*
     Why these? Mainly because according to https://www.teachmeaudio.com/mixing/techniques/audio-spectrum/ values, the audible ~flexible~ boundaries for higher and lower audible sounds by the masses are the lower hF and higher lF bounds below respectively.
 */
-const highFreqs = [17500, 16000, 14500, 13000, 11500, 10000, 8500, 7000, 5500];
-const lowFreqs = [10, 30, 65, 100, 135, 170, 205];
-const freqs = highFreqs.concat(lowFreqs).sort(function(i, j){
+const highFreqs = [22000, 20500, 19000, 17500, 16000, 14500, 13000, 11500, 10000, 8500];
+const lowFreqs = [10, 15, 20, 25, 30, 35, 40, 55, 70, 85];
+const freqs =　[17500, 16000, 35, 8500, 85, 11500, 20, 55, 25, 14500, 10, 10000, 20500, 22000, 19000, 40, 70, 13000, 15, 30];
+
+/*
+highFreqs.concat(lowFreqs).sort(function(i, j){
     return (Math.random() * 2) - 1;
 });
+*/
+
+
+const SET_VOLUME = 0.25;
+const REF_DUR = 3000;
+const REF_TEST_PAUSE_DUR = 2000;
+const TEST_SOUND_DUR = 5000;
+const TEST_REF_PAUSE_DUR = 1000;
 
 var whiteNoise = new Pizzicato.Sound(function(e) {
     var output = e.outputBuffer.getChannelData(0);
@@ -16,24 +27,21 @@ var whiteNoise = new Pizzicato.Sound(function(e) {
     }
 );
 
+var refSound = new Pizzicato.Sound({
+  source: "wave",
+  options: {
+    type: "sine",
+    frequency: 440,
+    volume: SET_VOLUME
+  }
+});
+
 async function experiment() {
   var subjectId = document.forms["begin-form"]["subjectId"].value;
 
-  /*
-  if (isNaN(subjectId)) {
-    window.alert("Please enter a number!");
-    return false;
-  }
-  */
-
-  // list of [freq, volume] pairs
-  /*
-  var tests = [];
-  var i;
-  for (i = 0; i < freqs.length; i++) {
-    tests.push([freqs[i], 0.5])
-  } */
-  var tests = [[440, 0.5], [880, 0.25]] // for testing purposes
+  // list of frequencies
+  var tests = freqs; // use this for complete test
+  // var tests = [440, 880] // for testing purposes
 
   // Hide "Begin experiment" button and show experiment buttons.
   $("#begin").css("display", "none");
@@ -43,14 +51,13 @@ async function experiment() {
   var allResults = []
   for (i = 0; i < tests.length; i++) {
     /*
-      when one trial is finished, results will be an object that looks like:
-      {subjectId: "1", frequency: 440, volume: 0.5, response: "2"}
+      when one trial is finished, results will be an object.
       The experiment function will pause now and wait for the calling of
       resolve() in doOneTrial(). The arguments of resolve() is returned by the
       awaite keyword and stored in results.
     */
-    var playNoise = (i != tests.length - 1);
-    var results = await doOneTrial(subjectId, tests[i][0], tests[i][1], playNoise);
+    var final = (i == tests.length - 1);
+    var results = await doOneTrial(subjectId, tests[i], final);
     console.log(results);
     allResults.push(results);
   }
@@ -58,7 +65,15 @@ async function experiment() {
   sendResults(subjectId, allResults);
 }
 
-function doOneTrial(subjectId, frequency, volume, playNoise) {
+function waitFor(time) {
+  return new Promise(resolve => {
+    setTimeout(function () {
+      resolve();
+    }, time);
+  });
+}
+
+function doOneTrial(subjectId, frequency, final) {
   /*
     add event handlers to stop/play button and form submit event.
     submitting the form will call finishTrial().
@@ -66,18 +81,17 @@ function doOneTrial(subjectId, frequency, volume, playNoise) {
     finishTrial() then calls the callback function.
     callback then calles resolve().
   */
-  return new Promise(resolve => {
-    // construct sound with certain frequency and volume.
-    var s = new Pizzicato.Sound({
+  return new Promise(async function(resolve) {
+    var testSound = new Pizzicato.Sound({
       source: "wave",
       options: {
-        type: "sawtooth",
+        type: "sine",
         frequency: frequency,
-        volume: volume,
+        volume: SET_VOLUME,
       }
     });
 
-    // this is called when an the finishTrial event handler is finished
+    // This function will be called at the end
     var callback = function (response) {
       console.log("callback");
       resolve({
@@ -90,80 +104,73 @@ function doOneTrial(subjectId, frequency, volume, playNoise) {
     var t = {
       subjectId: subjectId,
       frequency: frequency,
-      volume: volume,
-      toggleBtn: document.getElementById("expt-toggleBtn"),
       responseForm: document.getElementById("expt-response-form"),
-      sound: s,
+      sound: testSound,
       toggleBtnEvent: function() { toggle(t) },
-      responseFormEvent: function() { finishTrial(t, callback, playNoise) }
+      responseFormEvent: function() { finishTrial(t, final, callback) }
     };
-    console.log("played sound");
-
-    // play sound
-    s.play();
-
-    // show response form
-    document.getElementById("expt-wait").style.display = "none";
-    document.getElementById("expt-response").style.display = "block";
 
     // add event handlers for toggling on/off and submitting response
-    t.toggleBtn.addEventListener("click", t.toggleBtnEvent);
     t.responseForm.addEventListener("submit", t.responseFormEvent);
+
+    // show expt-ref div.
+    $("#expt-ref").css("display", "block");
+    $("#expt-response").css("display", "none");
+    $("#expt-wait").css("display", "none");
+    $("#expt-finish").css("display", "none");
+
+    // play reference sound
+    refSound.play();
+    await waitFor(REF_DUR);
+    refSound.stop();
+
+    // wait for a few seconds before hearing actual tested sound
+    await waitFor(REF_TEST_PAUSE_DUR);
+
+    // show expt-response div.
+    $("#expt-ref").css("display", "none");
+    $("#expt-response").css("display", "block");
+    $("#expt-response-submit").css("display", "none");
+
+    // play sound
+    testSound.play();
+    await waitFor(TEST_SOUND_DUR);
+    testSound.stop();
+
+    // The user can only see the submit button after the sound has finished playing
+    $("#expt-response-submit").css("display", "block");
   });
 }
 
-function toggle(t) {
-  // toggle sound on or off
-  if (t.toggleBtn.innerHTML === "Stop") {
-    console.log("stopped sound")
-    t.sound.stop();
-    t.toggleBtn.innerHTML = "Play";
-  } else if (t.toggleBtn.innerHTML === "Play") {
-    t.sound.play();
-    t.toggleBtn.innerHTML = "Stop";
-  }
-}
-
-function finishTrial(t, callback, playNoise) {
+async function finishTrial(t, isFinal, callback) {
   // finish the current trial
   console.log("Finishing trial");
-
-  // stop sound
-  t.sound.stop();
-  t.toggleBtn.innerHTML = "Stop";
-
-  // show waiting interface
-  document.getElementById("expt-wait").style.display = "block";
-  document.getElementById("expt-response").style.display = "none";
-
   // remove event handlers in this trial
-  t.toggleBtn.removeEventListener("click", t.toggleBtnEvent);
   t.responseForm.removeEventListener("submit", t.responseFormEvent);
 
+  // show waiting interface
+  $("#expt-response").css("display", "none");
+  if (isFinal) {
+    $("#expt-finish").css("display", "block");
+  } else {
+    $("#expt-wait").css("display", "block");
+  }
+
   // get response from html form
-  var response = document.forms["expt-response-form"]["certain"].value;
+  var response = document.forms["expt-response-form"]["intensity"].value;
   console.log("Response" + response);
 
-  if (playNoise) {
-    // play white noise
-    whiteNoise.play();
-    setTimeout(function() {
-        whiteNoise.stop();
-        setTimeout(function() {
-          // callback function defined in doOneTrial
-          callback(response);
-        }, 2000);
-    }, 5000);
-  } else {
-    callback(response);
+  if (!isFinal) {
+    await waitFor(TEST_REF_PAUSE_DUR);
   }
+
+  callback(response);
 }
 
 function sendResults(subjectId, allResults) {
   var resObj = {
     subjectId: subjectId,
     results: allResults
-    // list of {subjectId: "1", frequency: 440, volume: 0.5, response: "2"}
   };
   $.ajax("/", {
     data: JSON.stringify(resObj),
@@ -175,7 +182,6 @@ function sendResults(subjectId, allResults) {
 
 function finishCallback(data, textstatus, blahblah) {
   console.log("finish callback");
-  window.alert("Finished and sent results!");
 }
 
 $(document).ready(function(){
