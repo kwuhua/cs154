@@ -5,11 +5,13 @@ from urllib.parse import parse_qs
 import socket
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
+import os
 from os import curdir, sep, path
 import csv
 
 hostName = ""
 hostPort = 8000
+systemVolume = 40
 
 class MyServer(BaseHTTPRequestHandler):
 
@@ -49,18 +51,18 @@ class MyServer(BaseHTTPRequestHandler):
 
         print(post_data)
         if not path.exists("responses.csv"):
-            with open('responses.csv','w') as f: 
+            with open('responses.csv','w') as f:
                 writer = csv.writer(f)
-                column_headers = ['subject_id'] + [result['frequency'] for result in post_data['results']] 
+                column_headers = ['subject_id'] + [result['frequency'] for result in post_data['results']]
                 writer.writerow(column_headers)
                 f.close()
-        
+
         with open('responses.csv','a') as f:
             writer = csv.writer(f)
             data = [post_data['subjectId']] + [result['response'] for result in post_data['results']]
             writer.writerow(data)
-            f.close() 
-    
+            f.close()
+
         self._set_headers()
         try:
             response_dict = {"Success?": "Success!"}
@@ -74,6 +76,8 @@ class MyServer(BaseHTTPRequestHandler):
 
 
 def run(handler_class=MyServer):
+    os.system("amixer -D pulse sset Master {}%".format(systemVolume))
+    print("Set system volume to {}%".format(systemVolume))
     http = HTTPServer((hostName, hostPort), handler_class)
 
     print(f"Starting http server on {hostName}:{hostPort}")

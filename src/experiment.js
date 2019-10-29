@@ -14,7 +14,7 @@ highFreqs.concat(lowFreqs).sort(function(i, j){
 */
 
 
-const SET_VOLUME = 0.25;
+const SET_VOLUME = 1.0;
 const REF_DUR = 3000;
 const REF_TEST_PAUSE_DUR = 2000;
 const TEST_SOUND_DUR = 5000;

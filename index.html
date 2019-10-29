@@ -12,38 +12,38 @@
   <style>
     body {
         font-family: Tahoma, Geneva, sans-serif;
-        background-color: black;   
-        padding: 5px 5px 5px 5px; 
+        background-color: black;
+        padding: 5px 5px 5px 5px;
     }
     h1 {
-        color: white;    
+        color: white;
     }
     #begin, #expt {
         background-color: white;
         color: black;
         min-height: 260px;
-        margin: 5px 5px 5px 5px;    
+        margin: 5px 5px 5px 5px;
     }
     input {
         margin-top: 2px;
         margin-bottom: 2px;
         padding-top: 5px;
-        padding-bottom: 5px;     
+        padding-bottom: 5px;
     }
     input["radio"]:hover {
         color: red;
     }
     form {
-        padding: 5px 5px 5px 5px; 
+        padding: 5px 5px 5px 5px;
     }
     .range {
-        color: green;    
+        color: green;
     }
   </style>
 </head>
 <body>
   <h1>Frequency Test</h1>
-  <div class="boilerform"> 
+  <div class="boilerform">
   <div id="begin">
     <form id="begin-form" name="begin-form" onsubmit="return false;">
       Subject Id: <input type="text" name="subjectId"><br>
@@ -59,9 +59,9 @@
       <form id="expt-response-form" name="expt-response-form" onsubmit="return false">
         <input type="radio" name="intensity" value="0" />0 Can't hear anything<br>
         <input type="radio" name="intensity" value="1" />1 Can hear sound much more softly in comparison to 440Hz<br>
-        <input type="radio" name="intensity" value="2" />2 Can hear sound somewhat softer in comparison to 440Hx<br>
-        <input type="radio" name="intensity" value="3" />3 Can hear sound almost as loudly / clearly in comparison to 440Hz<br>
-        <input type="radio" name="intensity" value="4" checked>4 Can hear sound just as or more loud / clear in comparison to 440Hz<br>
+        <input type="radio" name="intensity" value="2" />2 Can hear sound somewhat softer in comparison to 440Hz<br>
+        <input type="radio" name="intensity" value="3" />3 Can hear sound almost as loudly in comparison to 440Hz<br>
+        <input type="radio" name="intensity" value="4" checked>4 Can hear sound just as or more loud in comparison to 440Hz<br>
         <input class="c-button" id="expt-response-submit" type="submit" value="Submit">
       </form>
     </div>
